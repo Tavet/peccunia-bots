@@ -7,7 +7,23 @@ from typing import Final
 
 NUMBER_OF_COINS: Final = 5
 FIAT_COIN: Final = "USD"
+CURRENT: Final = "daily"
 MAX_DECIMALS: Final = 4
+
+TEMPLATE: Final = {
+    'daily': {
+        'image': 'top-cryptos-template.png',
+        'date': (70, 71, 98),
+        'text': (43, 45, 66),
+        'api': f"https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym={FIAT_COIN}"
+    },
+    'weekly': {
+        'image': 'top-cryptos-template-weekly.png',
+        'date': (98, 70, 70),
+        'text': (66, 43, 43),
+        'api': f"https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym={FIAT_COIN}"
+    }
+}
 
 PROPERTIES: Final = {
     'y': 238,
@@ -19,6 +35,11 @@ PROPERTIES: Final = {
     'coin': {
         'x': 272,
         'path': './static/img/coins/'
+    },
+    'mktcap': {
+        'x': 522,
+        'font': 'Poppins-Light.ttf',
+        'size': 18,
     },
     'change24hr': {
         'x': 575,
@@ -47,7 +68,7 @@ def get_date_text():
 
 
 def get_data():
-    response = requests.get(f"https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym={FIAT_COIN}",
+    response = requests.get(TEMPLATE[CURRENT]['api'],
                             headers={"Apikey": "d6df8f92f6e494fb1ae92a4672b2f68b9d548986ef869911fd781ada322796e0"})
     json_response = response.json()
     coin_info = list()
@@ -56,7 +77,8 @@ def get_data():
         coin_info.append({
             'symbol': json_response['Data'][i]['CoinInfo']['Name'],
             'price': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['PRICE'], MAX_DECIMALS):,}",
-            'change24hr': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['CHANGE24HOUR'], MAX_DECIMALS):,}"
+            'change24hr': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['CHANGE24HOUR'], MAX_DECIMALS):,}",
+            'mktcap': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['MKTCAP'], MAX_DECIMALS):,}"
         })
     return coin_info
 
@@ -66,12 +88,12 @@ if __name__ == '__main__':
     coins = get_data()
     get_date_text()
 
-    image_template = Image.open('./static/img/top-cryptos-template.png').convert("RGBA")
+    image_template = Image.open(f"./static/img/{TEMPLATE[CURRENT]['image']}").convert("RGBA")
     image_draw = ImageDraw.Draw(image_template)
     image_draw.text(xy=(1186, 639.86),
                     text=get_date_text(),
                     anchor="rt",
-                    fill=(70, 71, 98),
+                    fill=TEMPLATE[CURRENT]['date'],
                     align="right",
                     font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18))
 
@@ -81,38 +103,47 @@ if __name__ == '__main__':
         image_draw.text(xy=(PROPERTIES['symbol']['x'], y),
                         text=f"${coin['symbol']}",
                         anchor="lt",
-                        fill=(43, 45, 66),
+                        fill=TEMPLATE[CURRENT]['text'],
                         align="left",
                         font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['symbol']['font']}",
                                                 PROPERTIES['symbol']['size']))
+        if CURRENT == "daily":
+            image_draw.text(xy=(PROPERTIES['change24hr']['x'], y),
+                            text=f"${coin['change24hr']}",
+                            anchor="lt",
+                            fill=TEMPLATE[CURRENT]['text'],
+                            align="left",
+                            font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['change24hr']['font']}",
+                                                    PROPERTIES['change24hr']['size']))
 
-        image_draw.text(xy=(PROPERTIES['change24hr']['x'], y),
-                        text=f"${coin['change24hr']}",
-                        anchor="lt",
-                        fill=(43, 45, 66),
-                        align="left",
-                        font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['change24hr']['font']}",
-                                                PROPERTIES['change24hr']['size']))
+            if float(coin['change24hr'].replace(',', '').replace("−", "-")) < 0:
+                image_template.paste(Image.open(PROPERTIES['change24hr']['down']['path']),
+                                     (PROPERTIES['change24hr']['up']['x'],
+                                      int(y) + 1))
+            else:
+                image_template.paste(Image.open(PROPERTIES['change24hr']['up']['path']),
+                                     (PROPERTIES['change24hr']['up']['x'],
+                                      int(y) + 2))
+        elif CURRENT == "weekly":
+            image_draw.text(xy=(PROPERTIES['mktcap']['x'], y),
+                            text=f"${coin['mktcap']}",
+                            anchor="lt",
+                            fill=TEMPLATE[CURRENT]['text'],
+                            align="left",
+                            font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
+                                                    PROPERTIES['mktcap']['size']))
 
         import numpy as np
+
         coin_image = Image.open(f"{PROPERTIES['coin']['path']}{coin['symbol'].lower()}.png").convert("RGBA")
         coin_image.thumbnail((72, 72))
 
         image_template.paste(coin_image, (PROPERTIES['coin']['x'], int(y) - 26), coin_image)
 
-        if float(coin['change24hr']) < 0:
-            image_template.paste(Image.open(PROPERTIES['change24hr']['down']['path']),
-                                 (PROPERTIES['change24hr']['up']['x'],
-                                  int(y) + 1))
-        else:
-            image_template.paste(Image.open(PROPERTIES['change24hr']['up']['path']),
-                                 (PROPERTIES['change24hr']['up']['x'],
-                                  int(y) + 2))
-
         image_draw.text(xy=(PROPERTIES['price']['x'], y),
                         text=f"${coin['price']}",
                         anchor="lt",
-                        fill=(43, 45, 66),
+                        fill=TEMPLATE[CURRENT]['text'],
                         align="left",
                         font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['price']['font']}",
                                                 PROPERTIES['price']['size']))
