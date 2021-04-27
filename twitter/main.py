@@ -5,7 +5,7 @@ import locale
 import calendar
 from typing import Final
 
-NUMBER_OF_COINS: Final = 5
+NUMBER_OF_COINS: Final = 6
 FIAT_COIN: Final = "USD"
 CURRENT: Final = "daily"
 MAX_DECIMALS: Final = 4
@@ -15,7 +15,7 @@ TEMPLATE: Final = {
         'image': 'top-cryptos-template.png',
         'date': (70, 71, 98),
         'text': (43, 45, 66),
-        'api': f"https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym={FIAT_COIN}"
+        'api': f"https://api.coingecko.com/api/v3/coins/markets?vs_currency={FIAT_COIN.lower()}&order=volume_desc&per_page=6&page=1&sparkline=false&price_change_percentage=24h"
     },
     'weekly': {
         'image': 'top-cryptos-template-weekly.png',
@@ -68,18 +68,18 @@ def get_date_text():
 
 
 def get_data():
-    response = requests.get(TEMPLATE[CURRENT]['api'],
-                            headers={"Apikey": "d6df8f92f6e494fb1ae92a4672b2f68b9d548986ef869911fd781ada322796e0"})
+    response = requests.get(TEMPLATE[CURRENT]['api'])
     json_response = response.json()
     coin_info = list()
 
     for i in range(NUMBER_OF_COINS):
-        coin_info.append({
-            'symbol': json_response['Data'][i]['CoinInfo']['Name'],
-            'price': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['PRICE'], MAX_DECIMALS):,}",
-            'change24hr': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['CHANGE24HOUR'], MAX_DECIMALS):,}",
-            'mktcap': f"{round(json_response['Data'][i]['RAW'][FIAT_COIN]['MKTCAP'], MAX_DECIMALS):,}"
-        })
+        if json_response[i]['symbol'] != "etlt":
+            coin_info.append({
+                'symbol': json_response[i]['symbol'].upper(),
+                'price': f"{round(json_response[i]['current_price'], MAX_DECIMALS):,}",
+                'change24hr': f"{round(json_response[i]['price_change_24h'], MAX_DECIMALS):,}",
+                'mktcap': f"{round(json_response[i]['market_cap_change_24h'], MAX_DECIMALS):,}"
+            })
     return coin_info
 
 
