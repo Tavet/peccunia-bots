@@ -7,7 +7,6 @@ from typing import Final
 
 NUMBER_OF_COINS: Final = 6
 FIAT_COIN: Final = "USD"
-CURRENT: Final = "daily"
 MAX_DECIMALS: Final = 4
 
 TEMPLATE: Final = {
@@ -67,8 +66,8 @@ def get_date_text():
     return f"{today.day} de {calendar.month_name[today.month].capitalize()}. {today.year}"
 
 
-def get_data():
-    response = requests.get(TEMPLATE[CURRENT]['api'])
+def get_data(current):
+    response = requests.get(TEMPLATE[current]['api'])
     json_response = response.json()
     coin_info = list()
 
@@ -83,17 +82,17 @@ def get_data():
     return coin_info
 
 
-if __name__ == '__main__':
+def generate_image(current):
     locale.setlocale(locale.LC_ALL, 'es_ES')
-    coins = get_data()
+    coins = get_data(current)
     get_date_text()
 
-    image_template = Image.open(f"./static/img/{TEMPLATE[CURRENT]['image']}").convert("RGBA")
+    image_template = Image.open(f"./static/img/{TEMPLATE[current]['image']}").convert("RGBA")
     image_draw = ImageDraw.Draw(image_template)
     image_draw.text(xy=(1186, 639.86),
                     text=get_date_text(),
                     anchor="rt",
-                    fill=TEMPLATE[CURRENT]['date'],
+                    fill=TEMPLATE[current]['date'],
                     align="right",
                     font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18))
 
@@ -103,15 +102,15 @@ if __name__ == '__main__':
         image_draw.text(xy=(PROPERTIES['symbol']['x'], y),
                         text=f"${coin['symbol']}",
                         anchor="lt",
-                        fill=TEMPLATE[CURRENT]['text'],
+                        fill=TEMPLATE[current]['text'],
                         align="left",
                         font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['symbol']['font']}",
                                                 PROPERTIES['symbol']['size']))
-        if CURRENT == "daily":
+        if current == "daily":
             image_draw.text(xy=(PROPERTIES['change24hr']['x'], y),
                             text=f"${coin['change24hr']}",
                             anchor="lt",
-                            fill=TEMPLATE[CURRENT]['text'],
+                            fill=TEMPLATE[current]['text'],
                             align="left",
                             font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['change24hr']['font']}",
                                                     PROPERTIES['change24hr']['size']))
@@ -124,11 +123,11 @@ if __name__ == '__main__':
                 image_template.paste(Image.open(PROPERTIES['change24hr']['up']['path']),
                                      (PROPERTIES['change24hr']['up']['x'],
                                       int(y) + 2))
-        elif CURRENT == "weekly":
+        elif current == "weekly":
             image_draw.text(xy=(PROPERTIES['mktcap']['x'], y),
                             text=f"${coin['mktcap']}",
                             anchor="lt",
-                            fill=TEMPLATE[CURRENT]['text'],
+                            fill=TEMPLATE[current]['text'],
                             align="left",
                             font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
                                                     PROPERTIES['mktcap']['size']))
@@ -143,7 +142,7 @@ if __name__ == '__main__':
         image_draw.text(xy=(PROPERTIES['price']['x'], y),
                         text=f"${coin['price']}",
                         anchor="lt",
-                        fill=TEMPLATE[CURRENT]['text'],
+                        fill=TEMPLATE[current]['text'],
                         align="left",
                         font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['price']['font']}",
                                                 PROPERTIES['price']['size']))

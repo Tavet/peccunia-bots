@@ -1,4 +1,10 @@
+# IDE
 .idea/
+
+# Env
 Lib/
 Scripts/
 pyvenv.cfg
+
+# Others
+__pycache__/

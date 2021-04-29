@@ -2,6 +2,7 @@ import os
 import tweepy
 import boto3
 from base64 import b64decode
+import top_image_generator as generator
 
 kms = boto3.client('kms')
 
@@ -30,6 +31,14 @@ def twitter_api():
 
 
 def lambda_handler(event, context):
-    twitter_api().update_status("#CRYPTOS Peccunia Rules")
+    api = twitter_api()
+    generator.generate_image("daily")
+    media = api.media_upload("./top.png")
+    tweet = "Top 5 Cryptos por su volumen en las últimas 24 horas.\nEdición diaria.\n\n#btc #eth #criptomonedas " \
+            "#binance #exchange #investment #usdt #binance #bitcoin #cryptocurrency #blockchain #btc #ethereum " \
+            "#money #trading #bitcoinmining #cryptocurrencies"
+    api.update_status(status=tweet, media_ids=[media.media_id])
     return 'Tweet publicado'
 
+
+lambda_handler(None, None)
