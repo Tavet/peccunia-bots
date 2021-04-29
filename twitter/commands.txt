@@ -1,0 +1,6 @@
+PowerShell error: Set-ExecutionPolicy RemoteSigned
+
+python -m virtualenv .
+pip install -r requirements.txt
+.\Scripts\activate.ps1
+.\Scripts\deactivate.bat
