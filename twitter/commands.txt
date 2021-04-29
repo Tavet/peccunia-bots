@@ -1,6 +1,15 @@
 PowerShell error: Set-ExecutionPolicy RemoteSigned
 
+1. Crear ambiente virtual
 python -m virtualenv .
-pip install -r requirements.txt
+
+2. Activar el ambiente
 .\Scripts\activate.ps1
-.\Scripts\deactivate.bat
+
+3. Ir a Libs -> site-package, instalar los requerimientos
+
+cd .\Lib\site-packages
+pip install -r requirements.txt
+deactivate
+
+4. Crear ZIP y subir al bucket de s3
