@@ -3,11 +3,13 @@ import tweepy
 import boto3
 from base64 import b64decode
 import top_image_generator as generator
-
-kms = boto3.client('kms')
+from datetime import date
+from PIL import Image
+import numpy as np
 
 
 def twitter_api():
+    kms = boto3.client('kms')
     access_token = kms.decrypt(
         CiphertextBlob=b64decode(os.environ['ACCESS_TOKEN']),
         EncryptionContext={'LambdaFunctionName': os.environ['AWS_LAMBDA_FUNCTION_NAME']}
@@ -30,15 +32,29 @@ def twitter_api():
     return tweepy.API(auth)
 
 
+def read_top_image():
+    s3 = boto3.resource('s3', region_name='us-west-2')
+    bucket = s3.Bucket('peccunia-top-images')
+    image_object = bucket.Object(f"daily/volume-{date.today()}.png")
+    response = image_object.get()
+    file_stream = response['Body']
+    im = Image.open(file_stream)
+    return np.array(im)
+
+
 def lambda_handler(event, context):
-    api = twitter_api()
     generator.generate_image("daily")
-    media = api.media_upload("./top.png")
     tweet = "Top 5 Cryptos por su volumen en las últimas 24 horas.\nEdición diaria.\n\n#btc #eth #criptomonedas " \
             "#binance #exchange #investment #usdt #binance #bitcoin #cryptocurrency #blockchain #btc #ethereum " \
             "#money #trading #bitcoinmining #cryptocurrencies"
-    api.update_status(status=tweet, media_ids=[media.media_id])
-    return 'Tweet publicado'
+    return tweet_image(read_top_image(), tweet)
+
+
+def tweet_image(image_template, message):
+    api = twitter_api()
+    print(image_template)
+    api.update_with_media(image_template, message)
+    return "Tweet publicado"
 
 
 lambda_handler(None, None)

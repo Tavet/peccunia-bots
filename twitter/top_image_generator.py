@@ -4,6 +4,10 @@ import requests
 import locale
 import calendar
 from typing import Final
+import boto3
+import io
+from datetime import date
+
 
 NUMBER_OF_COINS: Final = 6
 FIAT_COIN: Final = "USD"
@@ -147,4 +151,14 @@ def generate_image(current):
                         font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['price']['font']}",
                                                 PROPERTIES['price']['size']))
 
-    image_template.save("top.png", format="png")
+    upload_image(image_template)
+
+
+def upload_image(image_template):
+    s3 = boto3.resource('s3', region_name='us-west-2')
+    bucket = s3.Bucket('peccunia-top-images')
+    image_object = bucket.Object(f"daily/volume-{date.today()}.png")
+    in_mem_file = io.BytesIO()
+    image_template.save(in_mem_file, format("png"))
+    image_object.put(Body=in_mem_file.getvalue())
+
