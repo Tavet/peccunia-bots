@@ -8,7 +8,6 @@ import boto3
 import io
 from datetime import date
 
-
 NUMBER_OF_COINS: Final = 6
 FIAT_COIN: Final = "USD"
 MAX_DECIMALS: Final = 4
@@ -136,8 +135,6 @@ def generate_image(current):
                             font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
                                                     PROPERTIES['mktcap']['size']))
 
-        import numpy as np
-
         coin_image = Image.open(f"{PROPERTIES['coin']['path']}{coin['symbol'].lower()}.png").convert("RGBA")
         coin_image.thumbnail((72, 72))
 
@@ -161,4 +158,3 @@ def upload_image(image_template):
     in_mem_file = io.BytesIO()
     image_template.save(in_mem_file, format("png"))
     image_object.put(Body=in_mem_file.getvalue())
-

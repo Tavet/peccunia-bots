@@ -1,11 +1,17 @@
+# Native
 import os
-import tweepy
-import boto3
-from base64 import b64decode
-import top_image_generator as generator
 from datetime import date
+from base64 import b64decode
+
+# Cloud
+import boto3
+
+# Processors
 from PIL import Image
-import numpy as np
+import tweepy
+
+# Modules
+import top_image_generator as generator
 
 
 def twitter_api():
@@ -39,21 +45,20 @@ def read_top_image():
     response = image_object.get()
     file_stream = response['Body']
     im = Image.open(file_stream)
-    return np.array(im)
+    im.save("temp-daily-top.png", format="png")
 
 
 def lambda_handler(event, context):
     generator.generate_image("daily")
+    read_top_image()
     tweet = "Top 5 Cryptos por su volumen en las últimas 24 horas.\nEdición diaria.\n\n#btc #eth #criptomonedas " \
-            "#binance #exchange #investment #usdt #binance #bitcoin #cryptocurrency #blockchain #btc #ethereum " \
+            "#binance #exchange #investment #bnb #bitcoin #cryptocurrency #blockchain #ethereum " \
             "#money #trading #bitcoinmining #cryptocurrencies"
-    return tweet_image(read_top_image(), tweet)
+    return tweet_image(tweet)
 
 
-def tweet_image(image_template, message):
-    api = twitter_api()
-    print(image_template)
-    api.update_with_media(image_template, message)
+def tweet_image(message):
+    twitter_api().update_with_media("./temp-daily-top.png", message)
     return "Tweet publicado"
 
 
