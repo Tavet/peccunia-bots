@@ -1,6 +1,8 @@
 # Peccunia Bots
 
 ## Twitter
+AWS Lambda
+
 PowerShell error: Set-ExecutionPolicy RemoteSigned
 
 1. Crear ambiente virtual
