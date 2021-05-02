@@ -1,7 +1,6 @@
 # Image
 from PIL import Image, ImageDraw, ImageFont
 from typing import Final
-from io import BytesIO
 
 # API
 import requests
@@ -10,7 +9,7 @@ import requests
 import boto3
 
 # System
-from datetime import datetime
+from datetime import date, datetime
 import calendar
 import io
 import locale
@@ -175,7 +174,7 @@ def generate_image(top_type, bucket):
 def upload_image(image_template, top_type, bucket):
     s3 = boto3.resource('s3', region_name='us-west-2')
     bucket = s3.Bucket(bucket)
-    image_object = bucket.Object(f"top-images/{top_type}/{datetime.today()}.png")
+    image_object = bucket.Object(f"top-images/{top_type}/{date.today()}.png")
     in_mem_file = io.BytesIO()
     image_template.save(in_mem_file, format("png"))
     image_object.put(Body=in_mem_file.getvalue())

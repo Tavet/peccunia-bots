@@ -45,7 +45,7 @@ def read_top_image(top_type, bucket):
     response = image_object.get()
     file_stream = response['Body']
     im = Image.open(file_stream)
-    im.save("./tmp/temp.png", format="png")
+    im.save("/tmp/temp.png", format="png")
 
 
 def lambda_handler(event, context):
@@ -55,5 +55,5 @@ def lambda_handler(event, context):
 
 
 def tweet_image(message):
-    twitter_api().update_with_media("./tmp/temp.png", message)
+    twitter_api().update_with_media("/tmp/temp.png", message)
     return "Tweet publicado"
