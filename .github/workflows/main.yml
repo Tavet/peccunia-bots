@@ -12,9 +12,9 @@ env:
   ECS_CLUSTER:                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: # set this to the path to your Amazon ECS task definition
   DOCKERFILE_LOCATION: twitter/top                                          
-  CONTAINER_NAME: tops 
-
-  defaults:
+  CONTAINER_NAME: tops
+  
+defaults:
   run:
     shell: bash
 
