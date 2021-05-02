@@ -11,7 +11,7 @@ env:
   ECS_SERVICE:                 # set this to your Amazon ECS service name
   ECS_CLUSTER:                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
+  DOCKERFILE_LOCATION: twitter/top/Dockerfile                                            
   CONTAINER_NAME: tops           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
@@ -51,8 +51,8 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -f $DOCKERFILE_LOCATION -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push -f $DOCKERFILE_LOCATION $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
