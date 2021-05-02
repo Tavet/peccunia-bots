@@ -1,25 +1,9 @@
 # Peccunia Bots
+Los bots están construidos sobre Docker para ser ejecutados, en su gran mayoría, en servicios Serverless (Lambda) de AWS.
+Todas las llaves de acceso o tokens están encriptados bajo la llave de KMS [peccunia-env-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/0cf05860-5660-421b-b2d6-9a9e24e437a4)
 
-## Local testing
+## Local Exectuion
 - Agregar las credenciales restantes a default.env
 - Construir el docker-compose
-- Testear con el comando curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
-
-## Twitter
-AWS Lambda
-
-PowerShell error: Set-ExecutionPolicy RemoteSigned
-
-1. Crear ambiente virtual
-python -m virtualenv .
-
-2. Activar el ambiente
-.\Scripts\activate.ps1
-
-3. Ir a Libs -> site-package, instalar los requerimientos
-
-cd .\Lib\site-packages
-pip install -r requirements.txt
-deactivate
-
-4. Crear ZIP y subir al bucket de s3
+- Se puede hacer una petición http a la función.
+```curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type": "weekly","bucket":  "peccunia-assets","message": "test"}'```
