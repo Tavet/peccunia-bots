@@ -1,10 +1,10 @@
 # IDE
-.idea/
+src/.idea/
 
 # Env
-Lib/
-Scripts/
-pyvenv.cfg
+src/Lib/
+src/Scripts/
+src/pyvenv.cfg
 
 # Others
-__pycache__/
+src/__pycache__/

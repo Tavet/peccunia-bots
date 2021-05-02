@@ -1,13 +1,18 @@
+# Image
 from PIL import Image, ImageDraw, ImageFont
-from datetime import datetime
-import requests
-import locale
-import calendar
 from typing import Final
+
+# API
+import requests
+
+# Cloud
 import boto3
+
+# System
+from datetime import datetime
+import calendar
 import io
-from datetime import date
-import os
+import locale
 
 NUMBER_OF_COINS: Final = 5
 FIAT_COIN: Final = "USD"
@@ -98,8 +103,8 @@ def read_icon(bucket, coin):
 def generate_image(top_type, bucket):
     locale.setlocale(locale.LC_ALL, 'es_ES')
     coins = get_data(top_type)
-    get_date_text()
 
+    Image.DEBUG = True
     image_template = Image.open(f"./static/img/{TEMPLATE[top_type]['image']}").convert("RGBA")
     image_draw = ImageDraw.Draw(image_template)
     image_draw.text(xy=(1186, 639.86),
@@ -107,7 +112,7 @@ def generate_image(top_type, bucket):
                     anchor="rt",
                     fill=TEMPLATE[top_type]['date'],
                     align="right",
-                    font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18))
+                    font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18, encoding="unic"))
 
     for index, coin in enumerate(coins, start=1):
         y = PROPERTIES['y'] + ((82.8 * (index - 1) if index > 2 else 82.8) if index > 1 else 0)
@@ -164,7 +169,7 @@ def generate_image(top_type, bucket):
 def upload_image(image_template, top_type, bucket):
     s3 = boto3.resource('s3', region_name='us-west-2')
     bucket = s3.Bucket(bucket)
-    image_object = bucket.Object(f"top-images/{top_type}/{date.today()}.png")
+    image_object = bucket.Object(f"top-images/{top_type}/{datetime.today()}.png")
     in_mem_file = io.BytesIO()
     image_template.save(in_mem_file, format("png"))
     image_object.put(Body=in_mem_file.getvalue())
