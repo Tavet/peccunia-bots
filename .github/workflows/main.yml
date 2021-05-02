@@ -1,6 +1,1 @@
-name: Upload Peccunia Bots
 
-on:
-  push:
-    branches:
-    - master
