@@ -51,8 +51,7 @@ def read_top_image(top_type):
 def lambda_handler(event, context):
     generator.generate_image(event['type'], event['bucket'])
     read_top_image(event['type'])
-    tweet = event['message']
-    return tweet_image(tweet)
+    return tweet_image(event['message'])
 
 
 def tweet_image(message):
@@ -61,7 +60,7 @@ def tweet_image(message):
 
 
 lambda_handler({
-    "type": "weekly",
+    "type": "daily",
     "bucket":  "peccunia-assets",
     "message": "Top 5 Cryptos por Market Cap.\nEdición semanal.\n\n#crypto #bitcoin #cryptocurrency #blockchain #btc #ethereum #money #trading #entrepreneur #bitcoinmining #litecoin #bitcoins #investing #cryptocurrencies #bitcoinnews #eth #trader #investor #business #invest #success #investment"
 }, None)

@@ -86,14 +86,13 @@ def get_data(current):
     return coin_info
 
 
-def read_icon(bucket, top_type):
+def read_icon(bucket, coin):
     s3 = boto3.resource('s3', region_name='us-west-2')
     bucket = s3.Bucket(bucket)
-    image_object = bucket.Object(f"top-images/{top_type}/{date.today()}.png")
+    image_object = bucket.Object(f"crypto-icons/{coin}.png")
     response = image_object.get()
     file_stream = response['Body']
-    im = Image.open(file_stream)
-    im.save("temp.png", format="png")
+    return file_stream
 
 
 def generate_image(top_type, bucket):
@@ -146,7 +145,7 @@ def generate_image(top_type, bucket):
                             font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
                                                     PROPERTIES['mktcap']['size']))
 
-        coin_image = Image.open(f"{PROPERTIES['coin']['path']}{coin['symbol'].lower()}.png").convert("RGBA")
+        coin_image = Image.open(read_icon(bucket, coin['symbol'].lower())).convert("RGBA")
         coin_image.thumbnail((72, 72))
 
         image_template.paste(coin_image, (PROPERTIES['coin']['x'], int(y) - 26), coin_image)
@@ -162,10 +161,10 @@ def generate_image(top_type, bucket):
     upload_image(image_template, top_type, bucket)
 
 
-def upload_image(image_template, type, bucket):
+def upload_image(image_template, top_type, bucket):
     s3 = boto3.resource('s3', region_name='us-west-2')
     bucket = s3.Bucket(bucket)
-    image_object = bucket.Object(f"top-images/{type}/{date.today()}.png")
+    image_object = bucket.Object(f"top-images/{top_type}/{date.today()}.png")
     in_mem_file = io.BytesIO()
     image_template.save(in_mem_file, format("png"))
     image_object.put(Body=in_mem_file.getvalue())
