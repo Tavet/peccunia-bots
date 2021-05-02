@@ -57,10 +57,3 @@ def lambda_handler(event, context):
 def tweet_image(message):
     # twitter_api().update_with_media("./temp.png", message)
     return "Tweet publicado"
-
-
-lambda_handler({
-    "type": "daily",
-    "bucket":  "peccunia-assets",
-    "message": "Top 5 Cryptos por Market Cap.\nEdición semanal.\n\n#crypto #bitcoin #cryptocurrency #blockchain #btc #ethereum #money #trading #entrepreneur #bitcoinmining #litecoin #bitcoins #investing #cryptocurrencies #bitcoinnews #eth #trader #investor #business #invest #success #investment"
-}, None)
