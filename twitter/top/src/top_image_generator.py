@@ -173,6 +173,3 @@ def upload_image(image_template, top_type, bucket):
     in_mem_file = io.BytesIO()
     image_template.save(in_mem_file, format("png"))
     image_object.put(Body=in_mem_file.getvalue())
-
-
-generate_image("daily", "peccunia-assets")
