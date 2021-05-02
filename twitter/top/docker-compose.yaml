@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+    top:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: tops:latest
+    web:
+        env_file:
+            - default.env
+        build: .
+        ports:
+            - "9000:8080"
+        

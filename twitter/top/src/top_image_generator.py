@@ -1,6 +1,7 @@
 # Image
 from PIL import Image, ImageDraw, ImageFont
 from typing import Final
+from io import BytesIO
 
 # API
 import requests
@@ -94,7 +95,7 @@ def get_data(current):
 def read_icon(bucket, coin):
     s3 = boto3.resource('s3', region_name='us-west-2')
     bucket = s3.Bucket(bucket)
-    image_object = bucket.Object(f"crypto-icons/{coin}.png")
+    image_object = bucket.Object(f"crypto-icons/png/{coin}.png")
     response = image_object.get()
     file_stream = response['Body']
     return file_stream
@@ -112,7 +113,8 @@ def generate_image(top_type, bucket):
                     anchor="rt",
                     fill=TEMPLATE[top_type]['date'],
                     align="right",
-                    font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18, encoding="unic"))
+                    #font=ImageFont.truetype("./static/font/Poppins/Poppins-SemiBoldItalic.ttf", 18, encoding="unic")
+                    )
 
     for index, coin in enumerate(coins, start=1):
         y = PROPERTIES['y'] + ((82.8 * (index - 1) if index > 2 else 82.8) if index > 1 else 0)
@@ -122,16 +124,18 @@ def generate_image(top_type, bucket):
                         anchor="lt",
                         fill=TEMPLATE[top_type]['text'],
                         align="left",
-                        font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['symbol']['font']}",
-                                                PROPERTIES['symbol']['size']))
+                        #font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['symbol']['font']}",
+                        #                        PROPERTIES['symbol']['size'])
+                        )
         if top_type == "daily":
             image_draw.text(xy=(PROPERTIES['change24hr']['x'], y),
                             text=f"${coin['change24hr']}",
                             anchor="lt",
                             fill=TEMPLATE[top_type]['text'],
                             align="left",
-                            font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['change24hr']['font']}",
-                                                    PROPERTIES['change24hr']['size']))
+                            #font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['change24hr']['font']}",
+                            #                        PROPERTIES['change24hr']['size'])
+            )
 
             if float(coin['change24hr'].replace(',', '').replace("−", "-")) < 0:
                 image_template.paste(Image.open(PROPERTIES['change24hr']['down']['path']),
@@ -147,8 +151,9 @@ def generate_image(top_type, bucket):
                             anchor="lt",
                             fill=TEMPLATE[top_type]['text'],
                             align="left",
-                            font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
-                                                    PROPERTIES['mktcap']['size']))
+                            #font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['mktcap']['font']}",
+                            #                        PROPERTIES['mktcap']['size'])
+                            )
 
         coin_image = Image.open(read_icon(bucket, coin['symbol'].lower())).convert("RGBA")
         coin_image.thumbnail((72, 72))
@@ -160,8 +165,9 @@ def generate_image(top_type, bucket):
                         anchor="lt",
                         fill=TEMPLATE[top_type]['text'],
                         align="left",
-                        font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['price']['font']}",
-                                                PROPERTIES['price']['size']))
+                        #font=ImageFont.truetype(f"./static/font/Poppins/{PROPERTIES['price']['font']}",
+                        #                        PROPERTIES['price']['size'])
+                        )
 
     upload_image(image_template, top_type, bucket)
 

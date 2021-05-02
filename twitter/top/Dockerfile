@@ -1,9 +1,6 @@
 # set base image (host OS)
 FROM public.ecr.aws/lambda/python:3.8
 
-# set the working directory in the container
-WORKDIR /code
-
 # copy the dependencies file to the working directory
 COPY requirements.txt .
 
@@ -14,4 +11,4 @@ RUN pip install -r requirements.txt
 COPY src/ .
 
 # command to run on container start
-CMD ["lambda_function.lambda_handler"]
+CMD ["app.lambda_handler"]

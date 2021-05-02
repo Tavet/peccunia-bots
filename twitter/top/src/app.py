@@ -38,9 +38,9 @@ def twitter_api():
     return tweepy.API(auth)
 
 
-def read_top_image(top_type):
+def read_top_image(top_type, bucket):
     s3 = boto3.resource('s3', region_name='us-west-2')
-    bucket = s3.Bucket(os.environ['ASSETS_BUCKET'])
+    bucket = s3.Bucket(bucket)
     image_object = bucket.Object(f"top-images/{top_type}/{date.today()}.png")
     response = image_object.get()
     file_stream = response['Body']
@@ -50,10 +50,12 @@ def read_top_image(top_type):
 
 def lambda_handler(event, context):
     generator.generate_image(event['type'], event['bucket'])
-    read_top_image(event['type'])
+    read_top_image(event['type'], event['bucket'])
     return tweet_image(event['message'])
 
 
 def tweet_image(message):
-    # twitter_api().update_with_media("./temp.png", message)
+    twitter_api().update_with_media("./temp.png", message)
     return "Tweet publicado"
+
+lambda_handler({"type": "weekly","bucket":  "peccunia-assets","message": "test"}, None)
