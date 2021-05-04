@@ -61,6 +61,7 @@ jobs:
         with:
           name: peccunia-twitter-bots
           template: https://peccunia-cloudformation-templates.s3-us-west-2.amazonaws.com/twitter-lambda-bots.yaml
+          capabilities: CAPABILITY_AUTO_EXPAND, CAPABILITY_IAM
 
       #- name: Fill in the new image ID in the Amazon ECS task definition
       #  id: task-def
