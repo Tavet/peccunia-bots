@@ -55,7 +55,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Deploy Amazon EKS Cluster
+      - name: Deploy Lambda and Role permissions
         id: eks-cluster
         uses: aws-actions/aws-cloudformation-github-deploy@master
         with:
