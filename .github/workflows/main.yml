@@ -45,7 +45,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest #${{ github.sha }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
@@ -54,6 +54,14 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Deploy Amazon EKS Cluster
+        id: eks-cluster
+        uses: aws-actions/aws-cloudformation-github-deploy@master
+        with:
+          name: peccunia-twitter-bots
+          template: https://peccunia-cloudformation-templates.s3-us-west-2.amazonaws.com/twitter-lambda-bots.yaml
+          no-fail-on-empty-changeset: "1"
 
       #- name: Fill in the new image ID in the Amazon ECS task definition
       #  id: task-def
