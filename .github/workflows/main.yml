@@ -56,12 +56,11 @@ jobs:
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Deploy Lambda and Role permissions
-        id: eks-cluster
-        uses: aws-actions/aws-cloudformation-github-deploy@master
+        id: lambda-bot
+        uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3
         with:
           name: peccunia-twitter-bots
           template: https://peccunia-cloudformation-templates.s3-us-west-2.amazonaws.com/twitter-lambda-bots.yaml
-          no-fail-on-empty-changeset: "1"
 
       #- name: Fill in the new image ID in the Amazon ECS task definition
       #  id: task-def
