@@ -1,11 +1,57 @@
-# Peccunia Bots
-Los bots están construidos sobre Docker para ser ejecutados, en su gran mayoría, en servicios Serverless (Lambda) de AWS.
-Todas las llaves de acceso o tokens están encriptados bajo la llave de KMS [peccunia-env-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/0cf05860-5660-421b-b2d6-9a9e24e437a4)
+Peccunia Bots
+======
 
-Los roles de ejecución de Lambdas tienen permiso en el bucket [peccunia-assets](https://s3.console.aws.amazon.com/s3/buckets/peccunia-assets?region=us-west-2&tab=objects) y en la llave KMS descrita anteriormente.
+# Table of Contents
+1. [Twitter](#twitter)
+1.1 [Local Execution](#local-execution)
+1.2 [Possible Automated Tweets](#possible-automated-tweets)
 
-## Local Exectuion
-- Agregar las credenciales restantes a default.env
-- Construir el docker-compose
-- Se puede hacer una petición http a la función.
-```curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type": "weekly","bucket":  "peccunia-assets","message": "test"}'```
+Bucket: [peccunia-assets](https://s3.console.aws.amazon.com/s3/buckets/peccunia-assets?region=us-west-2&tab=objects) 
+KMS Key: [peccunia-env-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/0cf05860-5660-421b-b2d6-9a9e24e437a4)
+
+
+<div id="twitter" />
+Twitter 
+======
+<div id="local-execution" />
+Local Exectuion
+------
+
+- Add credentials to default.env
+- Build the docker-compose file
+- Make an HTTP request. E.g:
+```bash
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type": "weekly","bucket":  "peccunia-assets","message": "test"}'
+```
+
+<div id="possible-automated-tweets" />
+Possible Automated Tweets
+------
+The following JSON properties are mapped in CloudWatch with a CRON job. The purpose of this CRON job is to execute the Lambda that generates the image in the indicated time with the following properties to post tweets.
+
+#### Trending Top
+```json
+{
+    "type": "trending",
+    "bucket": "peccunia-assets",
+    "message": "Top 5 Trending Cryptos.\nEdición diaria.\n\n#crypto #bitcoin #cryptocurrency #blockchain #btc #ethereum #money #trading #entrepreneur #bitcoinmining #litecoin #bitcoins #investing #cryptocurrencies #bitcoinnews #eth #trader #investor #business #invest #success #investment"
+}
+```
+
+#### Daily Top
+```json
+{
+    "type": "daily",
+    "bucket": "peccunia-assets",
+    "message": "Top 5 Cryptos por su volumen en las últimas 24 horas.\nEdición diaria.\n\n#btc #eth #criptomonedas #binance #exchange #investment #bnb #bitcoin #cryptocurrency #blockchain #ethereum #money #trading #bitcoinmining #cryptocurrencies"
+}
+```
+
+#### Weekly Top
+```json
+{
+    "type": "weekly",
+    "bucket": "peccunia-assets",
+    "message": "Top 5 Cryptos por Market Cap.\nEdición semanal.\n\n#crypto #bitcoin #cryptocurrency #blockchain #btc #ethereum #money #trading #entrepreneur #bitcoinmining #litecoin #bitcoins #investing #cryptocurrencies #bitcoinnews #eth #trader #investor #business #invest #success #investment"
+}
+```
