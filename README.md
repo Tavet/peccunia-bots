@@ -1,19 +1,22 @@
 Peccunia Bots
 ======
 
-# Table of Contents
+### Table of Contents
 1. [Twitter](#twitter)
-1.1 [Local Execution](#local-execution)
-1.2 [Possible Automated Tweets](#possible-automated-tweets)
+    1. [Local Execution](#local-execution)
+    2. [Possible Automated Tweets](#possible-automated-tweets)
 
 Bucket: [peccunia-assets](https://s3.console.aws.amazon.com/s3/buckets/peccunia-assets?region=us-west-2&tab=objects) 
 KMS Key: [peccunia-env-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/0cf05860-5660-421b-b2d6-9a9e24e437a4)
 
 
 <div id="twitter" />
+
 Twitter 
 ======
+
 <div id="local-execution" />
+
 Local Exectuion
 ------
 
