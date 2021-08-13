@@ -28,8 +28,10 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d
 ```
 
 <div id="possible-automated-tweets" />
+
 Possible Automated Tweets
 ------
+
 The following JSON properties are mapped in CloudWatch with a CRON job. The purpose of this CRON job is to execute the Lambda that generates the image in the indicated time with the following properties to post tweets.
 
 #### Trending Top
