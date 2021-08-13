@@ -6,8 +6,10 @@ Peccunia Bots
     1. [Local Execution](#local-execution)
     2. [Possible Automated Tweets](#possible-automated-tweets)
 
-Bucket: [peccunia-assets](https://s3.console.aws.amazon.com/s3/buckets/peccunia-assets?region=us-west-2&tab=objects) 
-KMS Key: [peccunia-env-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/0cf05860-5660-421b-b2d6-9a9e24e437a4)
+**AWS Resources**
+
+*Assets Bucket* [peccunia-assets](https://s3.console.aws.amazon.com/s3/buckets/peccunia-assets?region=us-west-2&tab=objects)
+*KMS Key for Encryption/Decryption* [peccunia-bots-key](https://us-west-2.console.aws.amazon.com/kms/home?region=us-west-2#/kms/keys/fa57f222-b014-4262-8380-9b3b5a4bd551)
 
 
 <div id="twitter" />
